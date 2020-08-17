@@ -15,6 +15,8 @@ const config = require('../config') // this first.
 const adminLib = require('../src/lib/admin')
 const errorMiddleware = require('../src/middleware')
 const wlogger = require('../src/lib/wlogger')
+const IPFS = require('../src/lib/ipfs')
+const ipfs = new IPFS()
 
 async function startServer () {
   // Create a Koa instance.
@@ -66,6 +68,9 @@ async function startServer () {
   // Create the system admin user.
   const success = await adminLib.createSystemUser()
   if (success) console.log('System admin user created.')
+
+  // Start IPFS
+  await ipfs.startIPFS()
 
   return app
 }
