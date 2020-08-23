@@ -16,6 +16,7 @@ const adminLib = require('../src/lib/admin')
 const errorMiddleware = require('../src/middleware')
 const wlogger = require('../src/lib/wlogger')
 const IPFS = require('../src/lib/ipfs')
+const orbit = require('../src/lib/orbitdb')
 const ipfs = new IPFS()
 
 async function startServer () {
@@ -70,7 +71,9 @@ async function startServer () {
   if (success) console.log('System admin user created.')
 
   // Start IPFS
-  await ipfs.startIPFS()
+  const ipsfNode = await ipfs.startIPFS()
+  // Start orbit instance
+  await orbit.startOrbit(ipsfNode)
 
   return app
 }

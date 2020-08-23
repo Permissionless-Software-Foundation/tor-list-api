@@ -37,5 +37,8 @@ module.exports = {
       }
     },
     pubsub: true
+  },
+  orbitOptions: {
+    repo: './orbitdb/examples/orbit'
   }
 }
