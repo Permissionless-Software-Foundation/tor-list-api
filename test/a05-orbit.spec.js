@@ -7,7 +7,7 @@ const LOCALHOST = `http://localhost:${config.port}`
 
 describe('Orbit', () => {
   describe('POST /orbitdb/write', () => {
-    it('should throw 422 if entry is undifined', async () => {
+    it('should throw 422 if entry is undefined', async () => {
       try {
         const options = {
           method: 'POST',

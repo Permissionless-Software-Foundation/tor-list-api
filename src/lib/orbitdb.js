@@ -19,17 +19,21 @@ class ORBIT {
     try {
       // validate input
       if (typeof ipfsNode !== 'object') {
-        throw new Error('The ipdf node must be an object')
+        throw new Error('The ipfs node must be an object')
       }
 
       // creating orbit instance
       console.log('Starting OrbitDB...!')
-      const orbitdb = await _this.orbit_lib.createInstance(ipfsNode, config.orbitOptions)
+      const orbitdb = await _this.orbit_lib.createInstance(
+        ipfsNode,
+        config.orbitOptions
+      )
       const options = {
         accessController: {
           write: [orbitdb.identity.id]
         }
       }
+
       // starting orbitDB eventlog
       this.db = await orbitdb.eventlog('tor-list', options)
       await this.db.load()

@@ -15,7 +15,9 @@ class DbController {
 
   /**
    * @api {post} /orbit/write Create a new entry in the orbit database
+   * @apiPermission public
    * @apiName WriteToDb
+   * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
    * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "examplepage.com" }' localhost:5001/orbitdb/write
@@ -41,11 +43,15 @@ class DbController {
    */
   async writeToDb (ctx) {
     try {
-      // Error handler
-      if (!ctx.request.body.entry || typeof ctx.request.body.entry !== 'string') {
+      // Input Validation.
+      if (
+        !ctx.request.body.entry ||
+        typeof ctx.request.body.entry !== 'string'
+      ) {
         throw new Error("Property 'entry' must be a string!")
       }
 
+      // Add the entry to the database.
       const db = await _this.orbitDB.getNode()
       const entry = { userName: 'tor-list', message: ctx.request.body.entry }
       const hash = await db.add(entry)
