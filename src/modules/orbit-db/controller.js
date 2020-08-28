@@ -62,6 +62,42 @@ class DbController {
       ctx.throw(422, err.message)
     }
   }
+
+  /**
+   * @api {get} /orbit/entries Get all the data in the OrbitDB
+   * @apiPermission public
+   * @apiName getDbEntries
+   * @apiGroup OrbitDB
+   *
+   * @apiExample Example usage:
+   * curl -H "Content-Type: application/json" -X GET localhost:5000/orbitdb/entries
+   *
+   * @apiSuccess {Object[]} entries         Array of orbitdb data
+   * @apiSuccess {string}   users.userName  tor-list user
+   * @apiSuccess {String}   user.message    entry message
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "entries": [{
+   *          "userName": "tor-list"
+   *          "message": "some stored information"
+   *       }]
+   *     }
+   *
+   */
+  async getDbEntries (ctx) {
+    try {
+      const db = await _this.orbitDB.getNode()
+      const entries = db.iterator({ limit: -1 })
+        .collect()
+        .map(entry => entry.payload.value)
+      ctx.body = { entries }
+    } catch (error) {
+      ctx.throw(404)
+    }
+  }
+  
 }
 
 module.exports = DbController
