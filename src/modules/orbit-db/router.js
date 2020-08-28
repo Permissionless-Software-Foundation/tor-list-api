@@ -12,5 +12,10 @@ module.exports.routes = [
     method: 'POST',
     route: '/write',
     handlers: [controller.writeToDb]
+  },
+  {
+    method: 'GET',
+    route: '/entries',
+    handlers: [controller.getDbEntries]
   }
 ]

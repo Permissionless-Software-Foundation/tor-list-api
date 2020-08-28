@@ -59,4 +59,23 @@ describe('Orbit', () => {
       }
     })
   })
+
+  describe('GET /orbitdb', () => {
+    it('should fetch all the data in the OrbitDB', async () => {
+      const options = {
+        method: 'GET',
+        url: `${LOCALHOST}/orbitdb/entries`,
+        headers: {
+          Accept: 'application/json'
+        }
+      }
+      const result = await axios(options)
+
+      assert.property(result.data, 'entries', 'entry property expected')
+      const entries = result.data.entries
+      assert.hasAnyKeys(entries[0], ['userName', 'message'])
+      assert.isNumber(entries.length)
+    })
+  })
+
 })
