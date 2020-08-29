@@ -20,7 +20,7 @@ class DbController {
    * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "examplepage.com" }' localhost:5001/orbitdb/write
+   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "examplepage.com" }' https://tor-list-api.fullstack.cash/orbitdb/write
    *
    * @apiParam {String} entry the new entry to be included (required)
    *
@@ -70,7 +70,7 @@ class DbController {
    * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X GET localhost:5000/orbitdb/entries
+   * curl -H "Content-Type: application/json" -X GET https://tor-list-api.fullstack.cash/orbitdb/entries
    *
    * @apiSuccess {Object[]} entries         Array of orbitdb data
    * @apiSuccess {string}   users.userName  tor-list user
@@ -89,7 +89,8 @@ class DbController {
   async getDbEntries (ctx) {
     try {
       const db = await _this.orbitDB.getNode()
-      const entries = db.iterator({ limit: -1 })
+      const entries = db
+        .iterator({ limit: -1 })
         .collect()
         .map(entry => entry.payload.value)
       ctx.body = { entries }
@@ -97,7 +98,6 @@ class DbController {
       ctx.throw(404)
     }
   }
-  
 }
 
 module.exports = DbController
