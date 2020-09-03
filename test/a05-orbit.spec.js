@@ -77,5 +77,4 @@ describe('Orbit', () => {
       assert.isNumber(entries.length)
     })
   })
-
 })
