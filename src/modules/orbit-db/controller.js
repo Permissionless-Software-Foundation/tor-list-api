@@ -59,6 +59,7 @@ class DbController {
         hash
       }
     } catch (err) {
+      console.log('err: ', err)
       ctx.throw(422, err.message)
     }
   }

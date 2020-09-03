@@ -18,8 +18,8 @@ koa:
     - koa-mongodb
   ports:
     - "5001:5001"  # <host port>:<container port>
-  volumes:
+#  volumes:
 #    - ./logs:/home/coinjoin/consolidating-coinjoin/logs
-    - ./keys:/home/safeuser/keys
+#    - ./keys:/home/safeuser/keys
 
   restart: always
