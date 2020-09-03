@@ -72,6 +72,7 @@ class DbController {
    *
    * @apiExample Example usage:
    * curl -H "Content-Type: application/json" -X GET https://tor-list-api.fullstack.cash/orbitdb/entries
+   * curl -H "Content-Type: application/json" -X GET http://localhost:5003/orbitdb/entries
    *
    * @apiSuccess {Object[]} entries         Array of orbitdb data
    * @apiSuccess {string}   users.userName  tor-list user
@@ -89,11 +90,20 @@ class DbController {
    */
   async getDbEntries (ctx) {
     try {
+      // Get a handle on the OrbitDB node.
       const db = await _this.orbitDB.getNode()
+
+      // used for debugging.
+      // const temp = db.iterator({ limit: -1 }).collect()
+      // console.log(`temp: ${JSON.stringify(temp, null, 2)}`)
+
+      // Get the entries of the DB.
       const entries = db
         .iterator({ limit: -1 })
         .collect()
         .map(entry => entry.payload.value)
+
+      // Return the entries.
       ctx.body = { entries }
     } catch (error) {
       ctx.throw(404)
