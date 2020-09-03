@@ -7,7 +7,7 @@ koa-mongodb:
     - "5555:27017" # <host port>:<container port>
   volumes:
     - ./database:/data/db
-  command: mongod --smallfiles --logpath=/dev/null # -- quiet
+  command: mongod --logpath=/dev/null # -- quiet
   restart: always
 
 koa:
@@ -18,7 +18,10 @@ koa:
     - koa-mongodb
   ports:
     - "5001:5001"  # <host port>:<container port>
-#  volumes:
+    - "5004:5004"
+    - "5005:5005"
+  volumes:
+    - ./orbitdb:/home/safeuser/tor-list-api/orbitdb
 #    - ./logs:/home/coinjoin/consolidating-coinjoin/logs
 #    - ./keys:/home/safeuser/keys
 
