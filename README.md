@@ -5,5 +5,7 @@ This repository is a REST API server written in node.js and using [koa2](https:/
 
 This API is used to write to an [OrbitDB](https://orbitdb.org/) instance. The server also syndicates the database over the [IPFS](https://ipfs.io) network. The purpose of this p2p database is to curate links for the deep web; that is, sites on the Tor and IPFS networks. But it can also be used for curating clear web websites.
 
+The API can be accessed at [api.torlist.cash](https://api.torlist.cash)
+
 ## License
 [MIT](./LICENSE.md)
