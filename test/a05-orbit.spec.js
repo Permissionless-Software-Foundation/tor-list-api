@@ -144,11 +144,10 @@ describe('Orbit', () => {
 
         const result = await axios(options)
         assert(result.status === 200, 'Status Code 200 expected.')
-        console.log(result.data)
         assert.property(result.data, 'hash', 'hash of entry expected')
       } catch (err) {
         console.log(
-          'Error adding entry to the database: ' + JSON.stringify(err, null, 2)
+          'Error adding entry to the database: ' + err.message
         )
         throw err
       }
