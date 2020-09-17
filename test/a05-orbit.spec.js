@@ -7,11 +7,14 @@ const LOCALHOST = `http://localhost:${config.port}`
 
 describe('Orbit', () => {
   describe('POST /orbitdb/write', () => {
-    it('should throw 422 if entry is undefined', async () => {
+    it('should throw 422 if data is incomplete', async () => {
       try {
         const options = {
           method: 'POST',
-          url: `${LOCALHOST}/orbitdb/write`
+          url: `${LOCALHOST}/orbitdb/write`,
+          data: {
+            entry: 1234
+          }
         }
 
         await axios(options)
@@ -21,13 +24,100 @@ describe('Orbit', () => {
       }
     })
 
-    it('should throw 422 if entry is not a string', async () => {
+    it('should throw 422 if slpAddress is missing or is not a string', async () => {
+      try {
+        const options = {
+          method: 'POST',
+          url: `${LOCALHOST}/orbitdb/write`,
+          data: {
+            entry: 'sample.com ',
+            slpAddress: '',
+            description: 'this short description',
+            signature: 'sample.com ',
+            category: 'eth'
+          }
+        }
+
+        await axios(options)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.response.status === 422, 'Error code 422 expected.')
+      }
+    })
+
+    it('should throw 422 if description is missing or is not a string', async () => {
       try {
         const options = {
           method: 'post',
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
-            entry: 1234
+            entry: 'sample.com ',
+            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 1234,
+            signature: 'sample.com ',
+            category: 'eth'
+          }
+        }
+
+        await axios(options)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.response.status === 422, 'Error code 422 expected.')
+      }
+    })
+
+    it('should throw 422 if signature is missing or is not a string', async () => {
+      try {
+        const options = {
+          method: 'post',
+          url: `${LOCALHOST}/orbitdb/write`,
+          data: {
+            entry: 'sample.com ',
+            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 'this is a sample page',
+            signature: true,
+            category: 'bch'
+          }
+        }
+
+        await axios(options)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.response.status === 422, 'Error code 422 expected.')
+      }
+    })
+
+    it('should throw 422 if a caregoty is missing or is not a string', async () => {
+      try {
+        const options = {
+          method: 'post',
+          url: `${LOCALHOST}/orbitdb/write`,
+          data: {
+            entry: 'sample.com ',
+            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 'this is a sample page',
+            signature: 'sample.com '
+          }
+        }
+
+        await axios(options)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.response.status === 422, 'Error code 422 expected.')
+      }
+    })
+
+    it('should throw 422 if a caregoty is not in the accepted categories', async () => {
+      try {
+        const options = {
+          method: 'post',
+          url: `${LOCALHOST}/orbitdb/write`,
+          data: {
+            entry: 'sample.com ',
+            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 'this is a sample page',
+            signature: 'sample.com ',
+            category: 'sampleMUSTgiveERROR'
           }
         }
 
@@ -44,7 +134,11 @@ describe('Orbit', () => {
           method: 'post',
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
-            entry: 'test entry'
+            entry: 'sample.com ',
+            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 'this is a sample page',
+            signature: 'sample.com ',
+            category: 'bch'
           }
         }
 
@@ -53,7 +147,7 @@ describe('Orbit', () => {
         assert.property(result.data, 'hash', 'hash of entry expected')
       } catch (err) {
         console.log(
-          'Error adding entry to the database: ' + JSON.stringify(err, null, 2)
+          'Error adding entry to the database: ' + err.message
         )
         throw err
       }
@@ -73,7 +167,13 @@ describe('Orbit', () => {
 
       assert.property(result.data, 'entries', 'entry property expected')
       const entries = result.data.entries
-      assert.hasAnyKeys(entries[0], ['userName', 'message'])
+      assert.hasAnyKeys(entries[0], [
+        'entry',
+        'slpAddress',
+        'description',
+        'signature',
+        'category'
+      ])
       assert.isNumber(entries.length)
     })
   })
