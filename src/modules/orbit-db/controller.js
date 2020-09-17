@@ -20,9 +20,13 @@ class DbController {
    * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "examplepage.com" }' https://tor-list-api.fullstack.cash/orbitdb/write
+   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "example.com", "slpAddress": "simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp", "description": "this is the sample page", "signature": "signature", "category": "bch" }' localhost:5001/orbitdb/write
    *
-   * @apiParam {String} entry the new entry to be included (required)
+   * @apiParam {String} entry the new site url to be included (required)
+   * @apiParam {String} slpAddress the slp address related to the site(required)
+   * @apiParam {String} description a brief explanation of what's the site for (required)
+   * @apiParam {String} signature the new site's signature (required)
+   * @apiParam {String} category the new site's category (required)
    *
    * @apiSuccess {string} hash The multihash of the entry as a String
    *
@@ -42,24 +46,48 @@ class DbController {
    *     }
    */
   async writeToDb (ctx) {
+    const body = ctx.request.body
+    const acceptedCategories = ['bch', 'ecommerce', 'info', 'eth', 'ipfs']
     try {
-      // Input Validation.
-      if (
-        !ctx.request.body.entry ||
-        typeof ctx.request.body.entry !== 'string'
-      ) {
+      /*
+       * ERROR HANDLERS
+       *
+       */
+      // Required property
+      if (typeof body.entry !== 'string' || !body.entry.length) {
         throw new Error("Property 'entry' must be a string!")
+      }
+      if (typeof body.description !== 'string' || !body.description.length) {
+        throw new Error("Property 'description' must be a string!")
+      }
+      if (typeof body.slpAddress !== 'string' || !body.slpAddress.length) {
+        throw new Error("Property 'slpAddress' must be a string!")
+      }
+      if (typeof body.signature !== 'string' || !body.signature.length) {
+        throw new Error("Property 'signature' must be a string!")
+      }
+      if (typeof body.category !== 'string' || !body.category.length) {
+        throw new Error("Property 'category' must be a string!")
+      }
+      const criteria = acceptedCategories.some(item => body.category.trim() === item)
+      if (!criteria) {
+        throw new Error("Property 'category' must be 'bch', 'ecommerce', 'info', 'eth', or 'ipfs'!")
       }
 
       // Add the entry to the database.
       const db = await _this.orbitDB.getNode()
-      const entry = { userName: 'tor-list', message: ctx.request.body.entry }
+      const entry = {
+        entry: body.entry.trim(),
+        slpAddress: body.slpAddress.trim(),
+        description: body.description.trim(),
+        signature: body.signature.trim(),
+        category: body.category.trim()
+      }
       const hash = await db.add(entry)
       ctx.body = {
         hash
       }
     } catch (err) {
-      console.log('err: ', err)
       ctx.throw(422, err.message)
     }
   }
