@@ -35,7 +35,7 @@ class ORBIT {
       }
 
       // starting orbitDB eventlog
-      this.db = await orbitdb.eventlog('tor-list', options)
+      this.db = await orbitdb.eventlog(config.orbitOptions.dbString, options)
       await this.db.load()
 
       console.log('... OrbitDB is ready.')

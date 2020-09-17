@@ -52,7 +52,8 @@ describe('Orbit', () => {
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
             entry: 'sample.com ',
-            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
             description: 1234,
             signature: 'sample.com ',
             category: 'eth'
@@ -73,7 +74,8 @@ describe('Orbit', () => {
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
             entry: 'sample.com ',
-            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
             description: 'this is a sample page',
             signature: true,
             category: 'bch'
@@ -94,7 +96,8 @@ describe('Orbit', () => {
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
             entry: 'sample.com ',
-            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
             description: 'this is a sample page',
             signature: 'sample.com '
           }
@@ -114,7 +117,8 @@ describe('Orbit', () => {
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
             entry: 'sample.com ',
-            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
             description: 'this is a sample page',
             signature: 'sample.com ',
             category: 'sampleMUSTgiveERROR'
@@ -135,7 +139,8 @@ describe('Orbit', () => {
           url: `${LOCALHOST}/orbitdb/write`,
           data: {
             entry: 'sample.com ',
-            slpAddress: 'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
             description: 'this is a sample page',
             signature: 'sample.com ',
             category: 'bch'
@@ -146,9 +151,7 @@ describe('Orbit', () => {
         assert(result.status === 200, 'Status Code 200 expected.')
         assert.property(result.data, 'hash', 'hash of entry expected')
       } catch (err) {
-        console.log(
-          'Error adding entry to the database: ' + err.message
-        )
+        console.log('Error adding entry to the database: ' + err.message)
         throw err
       }
     })
@@ -167,13 +170,14 @@ describe('Orbit', () => {
 
       assert.property(result.data, 'entries', 'entry property expected')
       const entries = result.data.entries
-      assert.hasAnyKeys(entries[0], [
-        'entry',
-        'slpAddress',
-        'description',
-        'signature',
-        'category'
-      ])
+      // console.log(`entries: ${JSON.stringify(entries, null, 2)}`)
+
+      assert.property(entries[0], 'entry')
+      assert.property(entries[0], 'category')
+      assert.property(entries[0], 'signature')
+      assert.property(entries[0], 'slpAddress')
+      assert.property(entries[0], 'description')
+
       assert.isNumber(entries.length)
     })
   })
