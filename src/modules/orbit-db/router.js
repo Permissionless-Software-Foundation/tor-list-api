@@ -10,12 +10,18 @@ module.exports.baseUrl = '/orbitdb'
 module.exports.routes = [
   {
     method: 'POST',
-    route: '/write',
+    route: '/',
     handlers: [controller.writeToDb]
   },
   {
     method: 'GET',
-    route: '/entries',
+    route: '/',
     handlers: [controller.getDbEntries]
+  },
+  {
+    method: 'GET',
+    route: '/c/:category',
+    handlers: [controller.getDbEntriesByCategory]
   }
+
 ]

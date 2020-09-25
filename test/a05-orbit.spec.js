@@ -6,12 +6,12 @@ const axios = require('axios').default
 const LOCALHOST = `http://localhost:${config.port}`
 
 describe('Orbit', () => {
-  describe('POST /orbitdb/write', () => {
+  describe('POST /orbitdb', () => {
     it('should throw 422 if data is incomplete', async () => {
       try {
         const options = {
           method: 'POST',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 1234
           }
@@ -28,7 +28,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'POST',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress: '',
@@ -49,7 +49,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'post',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress:
@@ -71,7 +71,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'post',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress:
@@ -93,7 +93,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'post',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress:
@@ -114,7 +114,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'post',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress:
@@ -136,7 +136,7 @@ describe('Orbit', () => {
       try {
         const options = {
           method: 'post',
-          url: `${LOCALHOST}/orbitdb/write`,
+          url: `${LOCALHOST}/orbitdb`,
           data: {
             entry: 'sample.com ',
             slpAddress:
@@ -161,7 +161,7 @@ describe('Orbit', () => {
     it('should fetch all the data in the OrbitDB', async () => {
       const options = {
         method: 'GET',
-        url: `${LOCALHOST}/orbitdb/entries`,
+        url: `${LOCALHOST}/orbitdb`,
         headers: {
           Accept: 'application/json'
         }
@@ -170,8 +170,8 @@ describe('Orbit', () => {
 
       assert.property(result.data, 'entries', 'entry property expected')
       const entries = result.data.entries
-      // console.log(`entries: ${JSON.stringify(entries, null, 2)}`)
 
+      assert.property(entries[0], '_id')
       assert.property(entries[0], 'entry')
       assert.property(entries[0], 'category')
       assert.property(entries[0], 'signature')
@@ -179,6 +179,48 @@ describe('Orbit', () => {
       assert.property(entries[0], 'description')
 
       assert.isNumber(entries.length)
+    })
+  })
+
+  describe('GET /orbitdb/c/:category', () => {
+    it('should fetch all the data in the OrbitDB with the given category', async () => {
+      const options = {
+        method: 'GET',
+        url: `${LOCALHOST}/orbitdb/c/bch`,
+        headers: {
+          Accept: 'application/json'
+        }
+      }
+      const result = await axios(options)
+
+      assert.property(result.data, 'entries', 'entry property expected')
+      const entries = result.data.entries
+
+      assert.property(entries[0], '_id')
+      assert.property(entries[0], 'entry')
+      assert.property(entries[0], 'signature')
+      assert.property(entries[0], 'slpAddress')
+      assert.property(entries[0], 'description')
+      assert.property(entries[0], 'category')
+      assert.isNumber(entries.length)
+
+      const hasOtherCategories = entries.some(item => item.category !== 'bch')
+      assert.equal(hasOtherCategories, false, 'Contains differents categories')
+    })
+
+    it('should return an empty array', async () => {
+      const options = {
+        method: 'GET',
+        url: `${LOCALHOST}/orbitdb/c/mango`,
+        headers: {
+          Accept: 'application/json'
+        }
+      }
+      const result = await axios(options)
+
+      assert.property(result.data, 'entries', 'entry property expected')
+      const entries = result.data.entries
+      assert(!entries.length, 'Expected empty array')
     })
   })
 })

@@ -31,11 +31,12 @@ class ORBIT {
       const options = {
         accessController: {
           write: [orbitdb.identity.id]
-        }
+        },
+        indexBy: '_id'
       }
 
-      // starting orbitDB eventlog
-      this.db = await orbitdb.eventlog(config.orbitOptions.dbString, options)
+      // starting orbitDB docs storage
+      this.db = await orbitdb.docs(config.orbitOptions.dbString, options)
       await this.db.load()
 
       console.log('... OrbitDB is ready.')
