@@ -4,6 +4,7 @@
 */
 
 const orbitDB = require('../../lib/orbitdb')
+const crypto = require('crypto')
 
 let _this
 
@@ -11,16 +12,17 @@ class DbController {
   constructor () {
     _this = this
     this.orbitDB = orbitDB
+    this.crypto = crypto
   }
 
   /**
-   * @api {post} /orbit/write Create a new entry in the orbit database
+   * @api {post} /orbitdb Create a new entry in the orbit database
    * @apiPermission public
    * @apiName WriteToDb
    * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "example.com", "slpAddress": "simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp", "description": "this is the sample page", "signature": "signature", "category": "bch" }' localhost:5001/orbitdb/write
+   * curl -H "Content-Type: application/json" -X POST -d '{ "entry": "example.com", "slpAddress": "simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp", "description": "this is the sample page", "signature": "signature", "category": "bch" }' localhost:5001/orbitdb
    *
    * @apiParam {String} entry the new site url to be included (required)
    * @apiParam {String} slpAddress the slp address related to the site(required)
@@ -76,42 +78,50 @@ class DbController {
 
       // Add the entry to the database.
       const db = await _this.orbitDB.getNode()
+      const hash = _this.crypto.randomBytes(23).toString('hex')
       const entry = {
+        _id: hash,
         entry: body.entry.trim(),
         slpAddress: body.slpAddress.trim(),
         description: body.description.trim(),
         signature: body.signature.trim(),
         category: body.category.trim()
       }
-      const hash = await db.add(entry)
-      ctx.body = {
-        hash
-      }
+      await db.put(entry)
+      ctx.body = { hash }
     } catch (err) {
       ctx.throw(422, err.message)
     }
   }
 
   /**
-   * @api {get} /orbit/entries Get all the data in the OrbitDB
+   * @api {get} /orbitdb Get all the data in the OrbitDB
    * @apiPermission public
    * @apiName getDbEntries
    * @apiGroup OrbitDB
    *
    * @apiExample Example usage:
-   * curl -H "Content-Type: application/json" -X GET https://tor-list-api.fullstack.cash/orbitdb/entries
-   * curl -H "Content-Type: application/json" -X GET http://localhost:5003/orbitdb/entries
+   * curl -H "Content-Type: application/json" -X GET https://tor-list-api.fullstack.cash/orbitdb
+   * curl -H "Content-Type: application/json" -X GET http://localhost:5003/orbitdb
    *
-   * @apiSuccess {Object[]} entries         Array of orbitdb data
-   * @apiSuccess {string}   users.userName  tor-list user
-   * @apiSuccess {String}   user.message    entry message
+   * @apiSuccess {Object[]} entries Array of orbitdb data
+   * @apiSuccess {string} users._id entry unique id
+   * @apiSuccess {String} entry.entry site url
+   * @apiSuccess {String} entry.slpAddress the slp address related to the site
+   * @apiSuccess {String} entry.description a brief explanation of what's the site for
+   * @apiSuccess {String} entry.signature site's signature
+   * @apiSuccess {String} entry.category site's category
    *
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
    *       "entries": [{
-   *          "userName": "tor-list"
-   *          "message": "some stored information"
+   *          "_id": "QmbYHhnXEdmdfUDzZKeEg7HyG2f8veaF2wBrYFcSHJ3mvd",
+   *          "entry": "example.com",
+   *          "category" : "simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp",
+   *          "signature" : "this is the sample page",
+   *          "slpAddress" : "signature",
+   *          "description" : "bch"
    *       }]
    *     }
    *
@@ -122,14 +132,59 @@ class DbController {
       const db = await _this.orbitDB.getNode()
 
       // used for debugging.
-      // const temp = db.iterator({ limit: -1 }).collect()
+      // const temp = db.get('')
       // console.log(`temp: ${JSON.stringify(temp, null, 2)}`)
 
       // Get the entries of the DB.
       const entries = db
-        .iterator({ limit: -1 })
-        .collect()
-        .map(entry => entry.payload.value)
+        .get('')
+
+      // Return the entries.
+      ctx.body = { entries }
+    } catch (error) {
+      ctx.throw(404)
+    }
+  }
+
+  /**
+   * @api {get} /orbitdb/c/:category Get all the data in the OrbitDB
+   * @apiPermission public
+   * @apiName getDbEntriesByCategory
+   * @apiGroup OrbitDB
+   *
+   * @apiExample Example usage:
+   * curl -H "Content-Type: application/json" -X GET https://tor-list-api.fullstack.cash/orbitdb/c/bch
+   * curl -H "Content-Type: application/json" -X GET http://localhost:5003/orbitdb/c/bch
+   *
+   * @apiSuccess {Object[]} entries Array of orbitdb data
+   * @apiSuccess {string} users._id entry unique id
+   * @apiSuccess {String} entry.entry site url
+   * @apiSuccess {String} entry.slpAddress the slp address related to the site
+   * @apiSuccess {String} entry.description a brief explanation of what's the site for
+   * @apiSuccess {String} entry.signature site's signature
+   * @apiSuccess {String} entry.category site's category
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "entries": [{
+   *          "_id": "QmbYHhnXEdmdfUDzZKeEg7HyG2f8veaF2wBrYFcSHJ3mvd",
+   *          "entry": "example.com",
+   *          "category" : "simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp",
+   *          "signature" : "this is the sample page",
+   *          "slpAddress" : "signature",
+   *          "description" : "bch"
+   *       }]
+   *     }
+   *
+   */
+  async getDbEntriesByCategory (ctx) {
+    try {
+      const db = await _this.orbitDB.getNode()
+
+      // Get the entries of the DB.
+      const entries = db
+        .query(item => item.category === ctx.params.category)
 
       // Return the entries.
       ctx.body = { entries }
