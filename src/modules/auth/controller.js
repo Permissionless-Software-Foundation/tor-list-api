@@ -65,9 +65,7 @@ class Auth {
 
         const token = user.generateToken()
 
-        const response = user.toJSON()
-
-        delete response.password
+        const { password, ...response } = user.toJSON()
 
         ctx.body = {
           token,

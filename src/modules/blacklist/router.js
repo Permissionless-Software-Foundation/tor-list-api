@@ -1,3 +1,4 @@
+const validators = require('../../middleware/validators')
 const CONTROLLER = require('./controller')
 const controller = new CONTROLLER()
 
@@ -8,7 +9,10 @@ module.exports.routes = [
   {
     method: 'POST',
     route: '/',
-    handlers: [controller.addToBlacklist]
+    handlers: [
+      validators.ensureAdmin,
+      controller.addToBlacklist
+    ]
   },
   {
     method: 'GET',
@@ -24,6 +28,7 @@ module.exports.routes = [
     method: 'PUT',
     route: '/:id',
     handlers: [
+      validators.ensureAdmin,
       controller.getBlacklistItem,
       controller.updateBlacklistItem
     ]
@@ -32,6 +37,7 @@ module.exports.routes = [
     method: 'DELETE',
     route: '/:id',
     handlers: [
+      validators.ensureAdmin,
       controller.getBlacklistItem,
       controller.deleteBlacklistItem
     ]
