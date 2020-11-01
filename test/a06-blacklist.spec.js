@@ -29,7 +29,7 @@ describe('Blacklist', () => {
   })
 
   describe('POST /blacklist', () => {
-    it('should allow posting if token is invalid', async () => {
+    it('should not allow posting if token is invalid', async () => {
       const options = {
         method: 'POST',
         url: `${LOCALHOST}/blacklist`,
@@ -41,7 +41,7 @@ describe('Blacklist', () => {
 
       try {
         await axios(options)
-        assert.equal(true, false, 'Unexpected behavior')
+        assert.fail('Unexpected behavior')
       } catch (err) {
         assert.equal(err.response.status, 401)
       }
