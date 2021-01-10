@@ -9,5 +9,3 @@ The API can be accessed at [api.torlist.cash](https://api.torlist.cash).
 
 ## License
 [MIT](./LICENSE.md)
-
-test
