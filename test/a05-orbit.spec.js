@@ -179,6 +179,34 @@ describe('Orbit', () => {
         const result = await axios(options)
         assert(result.status === 200, 'Status Code 200 expected.')
         assert.property(result.data, 'hash', 'hash of entry expected')
+      } catch (err) {
+        console.log('Error adding entry to the database: ' + err.message)
+        throw err
+      }
+    })
+    it('should add the entry to the database', async () => {
+      /**
+       *  This entry will help to test the following
+       *  tests so it will be added to the blacklist
+       *
+       * */
+      try {
+        const options = {
+          method: 'post',
+          url: `${LOCALHOST}/orbitdb`,
+          data: {
+            entry: 'sample2.com ',
+            slpAddress:
+              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+            description: 'this is a sample page',
+            signature: 'sample2.com ',
+            category: 'bch'
+          }
+        }
+
+        const result = await axios(options)
+        assert(result.status === 200, 'Status Code 200 expected.')
+        assert.property(result.data, 'hash', 'hash of entry expected')
         context.entryId = result.data.hash
       } catch (err) {
         console.log('Error adding entry to the database: ' + err.message)
