@@ -3,6 +3,7 @@
   writing to the OrbitDB database.
 */
 
+const Blacklist = require('../../models/blacklist')
 const orbitDB = require('../../lib/orbitdb')
 const crypto = require('crypto')
 
@@ -11,6 +12,7 @@ let _this
 class DbController {
   constructor () {
     _this = this
+    this.Blacklist = Blacklist
     this.orbitDB = orbitDB
     this.crypto = crypto
   }
@@ -139,8 +141,9 @@ class DbController {
       const entries = db
         .get('')
 
+      const filteredEntries = await _this.filterEntries(entries)
       // Return the entries.
-      ctx.body = { entries }
+      ctx.body = { entries: filteredEntries }
     } catch (error) {
       ctx.throw(404)
     }
@@ -186,10 +189,48 @@ class DbController {
       const entries = db
         .query(item => item.category === ctx.params.category)
 
+      const filteredEntries = await _this.filterEntries(entries)
       // Return the entries.
-      ctx.body = { entries }
+      ctx.body = { entries: filteredEntries }
     } catch (error) {
       ctx.throw(404)
+    }
+  }
+
+  // Filter the entries and return only the
+  // non-blacklisted ones
+  async filterEntries (entries) {
+    try {
+      // Validate Inputs
+      if (!Array.isArray(entries)) {
+        throw new Error('Input must be an array of entries')
+      }
+      if (!entries.length) {
+        return entries
+      }
+
+      // Get Black List
+      const blacklist = await _this.Blacklist.find()
+      console.log('blackList : ', blacklist)
+
+      if (!blacklist.length) {
+        return entries
+      }
+
+      const filteredEntries = []
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
+        const _match = blacklist.filter((val) => val.hash === entry._id)
+
+        if (!_match.length) {
+          filteredEntries.push(entry)
+        }
+      }
+
+      return filteredEntries
+    } catch (error) {
+      console.log('Error in src/modules/orbit-db/controller/filterEntries()')
+      throw error
     }
   }
 }
