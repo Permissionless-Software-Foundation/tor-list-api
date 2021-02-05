@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('../../config')
 const assert = require('chai').assert
 const testUtils = require('./utils')
 
@@ -6,12 +6,13 @@ const axios = require('axios').default
 
 const LOCALHOST = `http://localhost:${config.port}`
 
-const UUT = require('../src/modules/orbit-db/controller')
+const UUT = require('../../src/modules/orbit-db/controller')
 const context = {}
 
 const addToBlackList = async (hash) => {
   try {
     const adminJWT = await testUtils.getAdminJWT()
+
     const options = {
       method: 'POST',
       url: `${LOCALHOST}/blacklist`,
@@ -30,11 +31,14 @@ const addToBlackList = async (hash) => {
     console.log(error)
   }
 }
+
 describe('Orbit', () => {
   let uut
+
   beforeEach(async () => {
     uut = new UUT()
   })
+
   describe('POST /orbitdb', () => {
     it('should throw 422 if data is incomplete', async () => {
       try {
@@ -184,6 +188,7 @@ describe('Orbit', () => {
         throw err
       }
     })
+
     it('should add the entry to the database', async () => {
       /**
        *  This entry will help to test the following
@@ -240,6 +245,7 @@ describe('Orbit', () => {
 
       assert.isNumber(entries.length)
     })
+
     it('Should return the entries ignoring the blacklisted ones', async () => {
       await addToBlackList(context.entryId)
 
@@ -302,6 +308,7 @@ describe('Orbit', () => {
       const entries = result.data.entries
       assert(!entries.length, 'Expected empty array')
     })
+
     it('Should return the entries ignoring the blacklisted ones', async () => {
       await addToBlackList(context.entryId)
 
@@ -337,6 +344,7 @@ describe('Orbit', () => {
         )
       }
     })
+
     it('should throw error if input is not an array of entries', async () => {
       try {
         await uut.filterEntries(1)
@@ -348,6 +356,7 @@ describe('Orbit', () => {
         )
       }
     })
+
     it('should return empty array if array provided is empty', async () => {
       try {
         const result = await uut.filterEntries([])
@@ -357,6 +366,7 @@ describe('Orbit', () => {
         assert(false, 'Unexpected result')
       }
     })
+
     it('Should return the entries ignoring the blacklisted ones', async () => {
       try {
         await addToBlackList(context.entryId)
@@ -367,6 +377,7 @@ describe('Orbit', () => {
         assert(false, 'Unexpected result')
       }
     })
+
     it('Should return the same array if the entries does not match into the black list', async () => {
       try {
         // Mock

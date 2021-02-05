@@ -1,6 +1,6 @@
-const app = require('../bin/server')
+const app = require('../../bin/server')
 const utils = require('./utils')
-const config = require('../config')
+const config = require('../../config')
 const assert = require('chai').assert
 
 const axios = require('axios').default
@@ -22,6 +22,7 @@ describe('Auth', () => {
     }
     const testUser = await utils.createUser(userObj)
     console.log(`TestUser : ${testUser}`)
+
     context.user = testUser.user
     context.token = testUser.token
   })
