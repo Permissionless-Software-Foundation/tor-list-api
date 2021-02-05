@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 
 const config = require('../../config')
 
-const EMAIL = 'test@test.com'
-const PASSWORD = 'pass'
+const EMAIL = 'test2@test.com'
+const PASSWORD = 'test'
 
 async function addUser () {
   // Connect to the Mongo Database.
@@ -24,7 +24,7 @@ async function addUser () {
   const user = new User(userData)
 
   // Enforce default value of 'user'
-  user.type = 'user'
+  user.type = 'admin'
 
   await user.save()
 

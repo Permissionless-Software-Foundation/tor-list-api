@@ -41,6 +41,6 @@ module.exports = {
 
   orbitOptions: {
     repo: './orbitdb/examples/orbit',
-    dbString: 'tor-list0001'
+    dbString: 'tor-list0002'
   }
 }
