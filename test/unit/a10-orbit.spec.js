@@ -12,6 +12,7 @@ const context = {}
 const addToBlackList = async (hash) => {
   try {
     const adminJWT = await testUtils.getAdminJWT()
+
     const options = {
       method: 'POST',
       url: `${LOCALHOST}/blacklist`,

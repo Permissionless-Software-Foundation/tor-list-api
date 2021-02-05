@@ -17,6 +17,7 @@ describe('Admin', () => {
   })
 
   afterEach(() => sandbox.restore())
+
   describe('loginAdmin()', () => {
     it('should logind admin', async () => {
       try {

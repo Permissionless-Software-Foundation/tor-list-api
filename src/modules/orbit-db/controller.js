@@ -211,7 +211,7 @@ class DbController {
 
       // Get Black List
       const blacklist = await _this.Blacklist.find()
-      console.log('blackList : ', blacklist)
+      // console.log('blackList : ', blacklist)
 
       if (!blacklist.length) {
         return entries

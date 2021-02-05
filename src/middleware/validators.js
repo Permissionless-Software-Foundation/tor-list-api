@@ -56,7 +56,7 @@ class Validators {
       const token = _this.getToken(ctx)
 
       if (!token) {
-        // console.log(`Err: Token not provided.`)
+        // console.log('Err: Token not provided.')
         ctx.throw(401)
       }
 
@@ -72,11 +72,12 @@ class Validators {
 
       ctx.state.user = await _this.User.findById(decoded.id, '-password')
       if (!ctx.state.user) {
-        // console.log(`Err: Could not find user.`)
+        // console.log('Err: Could not find user.')
         ctx.throw(401)
       }
 
       if (ctx.state.user.type !== 'admin') {
+        // console.log('Not an admin')
         ctx.throw(401, 'not admin')
       }
 
