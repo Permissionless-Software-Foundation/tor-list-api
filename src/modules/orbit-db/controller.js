@@ -6,7 +6,7 @@
 const Blacklist = require('../../models/blacklist')
 const orbitDB = require('../../lib/orbitdb')
 const crypto = require('crypto')
-
+const BCHJS = require('../../lib/bch')
 let _this
 
 class DbController {
@@ -15,6 +15,7 @@ class DbController {
     this.Blacklist = Blacklist
     this.orbitDB = orbitDB
     this.crypto = crypto
+    this.bchjs = new BCHJS()
   }
 
   /**
@@ -78,6 +79,16 @@ class DbController {
         throw new Error("Property 'category' must be 'bch', 'ecommerce', 'info', 'eth', or 'ipfs'!")
       }
 
+      // Verify that the signature was signed by a specific BCH address.
+      try {
+        const isValidSignature = _this.bchjs._verifySignature(body)
+        if (!isValidSignature) {
+          throw new Error('Invalid signature')
+        }
+      } catch (err) {
+        ctx.throw(406, err.message)
+      }
+
       // Add the entry to the database.
       const db = await _this.orbitDB.getNode()
       const hash = _this.crypto.randomBytes(23).toString('hex')
@@ -92,7 +103,8 @@ class DbController {
       await db.put(entry)
       ctx.body = { hash }
     } catch (err) {
-      ctx.throw(422, err.message)
+      const status = err.status || 422
+      ctx.throw(status, err.message)
     }
   }
 
