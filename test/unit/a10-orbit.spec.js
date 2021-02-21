@@ -164,6 +164,27 @@ describe('Orbit', () => {
         assert(err.response.status === 422, 'Error code 422 expected.')
       }
     })
+    it('should throw 406 if the signature , slpAddress or entry does not match', async () => {
+      try {
+        const options = {
+          method: 'post',
+          url: `${LOCALHOST}/orbitdb`,
+          data: {
+            entry: 'example.com',
+            slpAddress:
+              'simpleledger:qp49th03gvjn58d6fxzaga6u09w4z56smyuk43lzkd',
+            description: 'this is a sample page',
+            signature: 'ICcj+ShSRIllp0iTqQK49Ltnycg1upaT7dK5CPAwNIBqEtegn305dPBf5IMdx/ScuyOBWPEfOqab2V73TbuK6Us=',
+            category: 'bch'
+          }
+        }
+
+        await axios(options)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.response.status === 406, 'Error code 406 expected.')
+      }
+    })
 
     it('should add the entry to the database and return the hash', async () => {
       try {
@@ -171,15 +192,15 @@ describe('Orbit', () => {
           method: 'post',
           url: `${LOCALHOST}/orbitdb`,
           data: {
-            entry: 'sample.com ',
+            entry: 'example.com',
             slpAddress:
-              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+              'simpleledger:qp49th03gvjn58d6fxzaga6u09w4z56smyuk43lzkd',
             description: 'this is a sample page',
-            signature: 'sample.com ',
+            signature: 'H1Bv2xUBGZBTuNsUghix03Yp8n8YPPkfsPq6LktwDpC2e1estOfYx96NH3/eaHJpQpPSHSb6pQYaiR3KZ6Z9lRc=',
             category: 'bch'
           }
         }
-
+ 
         const result = await axios(options)
         assert(result.status === 200, 'Status Code 200 expected.')
         assert.property(result.data, 'hash', 'hash of entry expected')
@@ -200,11 +221,11 @@ describe('Orbit', () => {
           method: 'post',
           url: `${LOCALHOST}/orbitdb`,
           data: {
-            entry: 'sample2.com ',
+            entry: 'example.com',
             slpAddress:
-              'simpleledger:qzl6k0wvdd5ky99hewghqdgfj2jhcpqnfqtaqr70rp',
+              'simpleledger:qp49th03gvjn58d6fxzaga6u09w4z56smyuk43lzkd',
             description: 'this is a sample page',
-            signature: 'sample2.com ',
+            signature: 'H1Bv2xUBGZBTuNsUghix03Yp8n8YPPkfsPq6LktwDpC2e1estOfYx96NH3/eaHJpQpPSHSb6pQYaiR3KZ6Z9lRc=',
             category: 'bch'
           }
         }

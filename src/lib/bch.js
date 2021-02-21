@@ -11,7 +11,7 @@ class Bch {
     this.bchjs = new BCHJS()
   }
 
-  // Verify that the signature was signed by a specific BCH address.
+  // Verify that the entry was signed by a specific BCH address.
   _verifySignature (verifyObj) {
     try {
       // Expand the input object.

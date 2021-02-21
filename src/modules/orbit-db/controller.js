@@ -79,7 +79,7 @@ class DbController {
         throw new Error("Property 'category' must be 'bch', 'ecommerce', 'info', 'eth', or 'ipfs'!")
       }
 
-      // Verify that the signature was signed by a specific BCH address.
+      // Verify that the entry was signed by a specific BCH address.
       try {
         const isValidSignature = _this.bchjs._verifySignature(body)
         if (!isValidSignature) {
