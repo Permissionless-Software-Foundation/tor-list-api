@@ -200,7 +200,7 @@ describe('Orbit', () => {
             category: 'bch'
           }
         }
- 
+
         const result = await axios(options)
         assert(result.status === 200, 'Status Code 200 expected.')
         assert.property(result.data, 'hash', 'hash of entry expected')
