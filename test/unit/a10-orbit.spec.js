@@ -3,10 +3,13 @@ const assert = require('chai').assert
 const testUtils = require('./utils')
 
 const axios = require('axios').default
+const sinon = require('sinon')
 
 const LOCALHOST = `http://localhost:${config.port}`
 
 const UUT = require('../../src/modules/orbit-db/controller')
+const mockContext = require('./mocks/ctx-mock').context
+
 const context = {}
 
 const addToBlackList = async (hash) => {
@@ -34,10 +37,12 @@ const addToBlackList = async (hash) => {
 
 describe('Orbit', () => {
   let uut
-
+  let sandbox
   beforeEach(async () => {
     uut = new UUT()
+    sandbox = sinon.createSandbox()
   })
+  afterEach(() => { sandbox.restore() })
 
   describe('POST /orbitdb', () => {
     it('should throw 422 if data is incomplete', async () => {
@@ -239,6 +244,55 @@ describe('Orbit', () => {
         throw err
       }
     })
+    it('should throw error 406 if the slp address has Insufficient psf balance ', async () => {
+      try {
+        // Mock live network calls.
+        sandbox.stub(uut.bchjs, 'getPSFTokenBalance').resolves(9)
+        uut.env = 'mock'
+        // Mock the context object.
+        const ctx = mockContext()
+        ctx.request = {
+          body: {
+            entry: 'example.com',
+            slpAddress:
+                'simpleledger:qp49th03gvjn58d6fxzaga6u09w4z56smyuk43lzkd',
+            description: 'this is a sample page',
+            signature: 'H1Bv2xUBGZBTuNsUghix03Yp8n8YPPkfsPq6LktwDpC2e1estOfYx96NH3/eaHJpQpPSHSb6pQYaiR3KZ6Z9lRc=',
+            category: 'bch'
+          }
+        }
+        await uut.writeToDb(ctx)
+        assert(false, 'Unexpected result')
+      } catch (err) {
+        assert(err.status === 406, 'Error code 406 expected.')
+      }
+    })
+    it('should add the entry to the database if the slp address has enough balance', async () => {
+      try {
+        // Mock live network calls.
+        sandbox.stub(uut.bchjs, 'getPSFTokenBalance').resolves(10)
+        uut.env = 'mock'
+        // Mock the context object.
+        const ctx = mockContext()
+        ctx.request = {
+          body: {
+            entry: 'example.com',
+            slpAddress:
+                'simpleledger:qp49th03gvjn58d6fxzaga6u09w4z56smyuk43lzkd',
+            description: 'this is a sample page',
+            signature: 'H1Bv2xUBGZBTuNsUghix03Yp8n8YPPkfsPq6LktwDpC2e1estOfYx96NH3/eaHJpQpPSHSb6pQYaiR3KZ6Z9lRc=',
+            category: 'bch'
+          }
+        }
+        await uut.writeToDb(ctx)
+        const response = ctx.response
+
+        assert.equal(response.status, 200)
+        assert.isString(response.body.hash)
+      } catch (err) {
+        assert(false, 'Unexpected result')
+      }
+    })
   })
 
   describe('GET /orbitdb', () => {
@@ -263,6 +317,7 @@ describe('Orbit', () => {
       assert.property(entries[0], 'signature')
       assert.property(entries[0], 'slpAddress')
       assert.property(entries[0], 'description')
+      assert.property(entries[0], 'balance')
 
       assert.isNumber(entries.length)
     })
@@ -309,6 +364,8 @@ describe('Orbit', () => {
       assert.property(entries[0], 'slpAddress')
       assert.property(entries[0], 'description')
       assert.property(entries[0], 'category')
+      assert.property(entries[0], 'balance')
+
       assert.isNumber(entries.length)
 
       const hasOtherCategories = entries.some(item => item.category !== 'bch')

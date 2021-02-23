@@ -7,6 +7,7 @@ const Blacklist = require('../../models/blacklist')
 const orbitDB = require('../../lib/orbitdb')
 const crypto = require('crypto')
 const BCHJS = require('../../lib/bch')
+const config = require('../../../config')
 let _this
 
 class DbController {
@@ -16,6 +17,7 @@ class DbController {
     this.orbitDB = orbitDB
     this.crypto = crypto
     this.bchjs = new BCHJS()
+    this.env = config.env
   }
 
   /**
@@ -79,11 +81,23 @@ class DbController {
         throw new Error("Property 'category' must be 'bch', 'ecommerce', 'info', 'eth', or 'ipfs'!")
       }
 
-      // Verify that the entry was signed by a specific BCH address.
+      let psfBalance
       try {
+        // Verify that the entry was signed by a specific BCH address.
         const isValidSignature = _this.bchjs._verifySignature(body)
         if (!isValidSignature) {
           throw new Error('Invalid signature')
+        }
+
+        // Verify psf tokens balance
+        if (_this.env === 'test') {
+          psfBalance = 100
+        } else {
+          psfBalance = await _this.bchjs.getPSFTokenBalance(body.slpAddress)
+        }
+
+        if (psfBalance < 10) {
+          throw new Error('Insufficient psf balance')
         }
       } catch (err) {
         ctx.throw(406, err.message)
@@ -98,7 +112,8 @@ class DbController {
         slpAddress: body.slpAddress.trim(),
         description: body.description.trim(),
         signature: body.signature.trim(),
-        category: body.category.trim()
+        category: body.category.trim(),
+        balance: psfBalance
       }
       await db.put(entry)
       ctx.body = { hash }
