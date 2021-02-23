@@ -33,7 +33,7 @@ class Bch {
       throw err
     }
   }
-  
+
   // Gets the total psf token balance
   async getPSFTokenBalance (slpAddress) {
     try {
