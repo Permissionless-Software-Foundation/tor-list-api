@@ -271,6 +271,7 @@ describe('Orbit', () => {
       try {
         // Mock live network calls.
         sandbox.stub(uut.bchjs, 'getPSFTokenBalance').resolves(10)
+        sandbox.stub(uut.bchjs, 'getMerit').resolves(10)
         uut.env = 'mock'
         // Mock the context object.
         const ctx = mockContext()
@@ -318,6 +319,7 @@ describe('Orbit', () => {
       assert.property(entries[0], 'slpAddress')
       assert.property(entries[0], 'description')
       assert.property(entries[0], 'balance')
+      assert.property(entries[0], 'merit')
 
       assert.isNumber(entries.length)
     })
@@ -365,6 +367,7 @@ describe('Orbit', () => {
       assert.property(entries[0], 'description')
       assert.property(entries[0], 'category')
       assert.property(entries[0], 'balance')
+      assert.property(entries[0], 'merit')
 
       assert.isNumber(entries.length)
 

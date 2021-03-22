@@ -116,4 +116,36 @@ describe('bch', () => {
       assert.equal(result, 0)
     })
   })
+  describe('#getPSFTokenBalance', () => {
+    it('should throw error if slpAddr is not provided', async () => {
+      try {
+        await uut.getMerit()
+        assert.fail('Unexpected result')
+      } catch (err) {
+        assert.include(err.message, 'slpAddr must be a string')
+      }
+    })
+    it('should throw error if slpAddr provided is invalid type', async () => {
+      try {
+        await uut.getMerit(1)
+        assert.fail('Unexpected result')
+      } catch (err) {
+        assert.include(err.message, 'slpAddr must be a string')
+      }
+    })
+    it('should return the merit ', async () => {
+      try {
+        // Mock live network calls.
+        sandbox
+          .stub(uut.msgLib.merit, 'agMerit')
+          .resolves(100)
+
+        const slpAddr = 'simpleledger:qqgnksc6zr4nzxrye69fq625wu2myxey6uh9kzjy96'
+        const merit = await uut.getMerit(slpAddr)
+        assert.isNumber(merit)
+      } catch (err) {
+        assert.fail('Unexpected result')
+      }
+    })
+  })
 })
