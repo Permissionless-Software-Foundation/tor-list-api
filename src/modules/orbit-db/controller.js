@@ -102,8 +102,14 @@ class DbController {
       } catch (err) {
         ctx.throw(406, err.message)
       }
-
       // Add the entry to the database.
+      let merit
+      if (_this.env === 'test') {
+        merit = 100
+      } else {
+        merit = await _this.bchjs.getMerit(body.slpAddress)
+      }
+
       const db = await _this.orbitDB.getNode()
       const hash = _this.crypto.randomBytes(23).toString('hex')
       const entry = {
@@ -113,11 +119,13 @@ class DbController {
         description: body.description.trim(),
         signature: body.signature.trim(),
         category: body.category.trim(),
-        balance: psfBalance
+        balance: psfBalance,
+        merit
       }
       await db.put(entry)
       ctx.body = { hash }
     } catch (err) {
+      console.log(err.message)
       const status = err.status || 422
       ctx.throw(status, err.message)
     }

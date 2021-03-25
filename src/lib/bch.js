@@ -4,12 +4,14 @@
 
 // Public npm libraries
 const BCHJS = require('@psf/bch-js')
+const MsgLib = require('bch-message-lib')
 
 class Bch {
   constructor () {
     // Encapsulate dependencies
     this.bchjs = new BCHJS()
     this.PSF_TOKEN_ID = '38e97c5d7d3585a2cbf3f9580c82ca33985f9cb0845d4dcce220cb709f9538b0'
+    this.msgLib = new MsgLib({ bchjs: this.bchjs })
   }
 
   // Verify that the entry was signed by a specific BCH address.
@@ -55,6 +57,19 @@ class Bch {
     } catch (err) {
       console.error('Error in bch.js/getPSFTokenBalance()')
       throw err
+    }
+  }
+
+  async getMerit (slpAddr) {
+    try {
+      if (!slpAddr || typeof slpAddr !== 'string') {
+        throw new Error('slpAddr must be a string')
+      }
+      const merit = await this.msgLib.merit.agMerit(slpAddr, this.PSF_TOKEN_ID)
+      return merit
+    } catch (error) {
+      console.error('error in bch.js/getMerit()')
+      throw error
     }
   }
 }
