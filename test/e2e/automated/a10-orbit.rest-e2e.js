@@ -1,14 +1,14 @@
-const config = require('../../config')
+const config = require('../../../config')
 const assert = require('chai').assert
-const testUtils = require('./utils')
+const testUtils = require('../../utils/test-utils')
 
 const axios = require('axios').default
 const sinon = require('sinon')
 
 const LOCALHOST = `http://localhost:${config.port}`
 
-const UUT = require('../../src/modules/orbit-db/controller')
-const mockContext = require('./mocks/ctx-mock').context
+const UUT = require('../../../src/modules/orbit-db/controller')
+const mockContext = require('../../unit/mocks/ctx-mock').context
 
 const context = {}
 
