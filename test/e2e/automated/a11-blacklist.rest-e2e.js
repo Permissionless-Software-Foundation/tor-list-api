@@ -1,5 +1,5 @@
-const testUtils = require('./utils')
-const config = require('../../config')
+const testUtils = require('../../utils/test-utils')
+const config = require('../../../config')
 const assert = require('chai').assert
 
 const axios = require('axios').default
@@ -15,7 +15,8 @@ describe('Blacklist', () => {
 
     const userObj = {
       email: 'test3@test.com',
-      password: 'pass3'
+      password: 'pass3',
+      name: 'test3'
     }
     const testUser = await testUtils.createUser(userObj)
 

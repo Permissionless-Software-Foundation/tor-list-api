@@ -1,13 +1,13 @@
 const assert = require('chai').assert
 
-const BCHJS = require('../../src/lib/bch')
+const BCHJS = require('../../../src/lib/bch')
 
 const sinon = require('sinon')
 
 const util = require('util')
 util.inspect.defaultOptions = { depth: 1 }
 
-const mockData = require('./mocks/bch-mock')
+const mockData = require('../mocks/bch-mock')
 
 let sandbox
 let uut

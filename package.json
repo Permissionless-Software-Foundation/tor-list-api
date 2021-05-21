@@ -5,11 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "export TOR_ENV=test && npm run prep-test && nyc --reporter=text mocha --timeout 15000 --exit test/unit/",
+    "test": "npm run test:all",
+    "test:all": "export TOR_ENV=test && nyc --reporter=text mocha --exit --timeout 15000 test/unit/biz-logic/ test/unit/rest-api/ test/e2e/automated/",
+    "test:unit:lib": "export TOR_ENV=test && mocha --exit --timeout 15000 test/unit/biz-logic/",
+    "test:unit:rest": "export TOR_ENV=test && mocha --exit --timeout 15000 test/unit/rest-api/",
+    "test:e2e:auto": "export TOR_ENV=test && mocha --exit --timeout 15000 test/e2e/automated/",
     "lint": "standard --env mocha --fix",
     "docs": "./node_modules/.bin/apidoc -i src/ -o docs",
-    "coverage": "export TOR_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
-    "coverage:report": "export TOR_ENV=test && npm run prep-test && nyc --reporter=html mocha --exit --timeout 15000 test/unit/",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coverage:report": "export TOR_ENV=test && nyc --reporter=html mocha --exit --timeout 15000 test/unit/biz-logic/ test/unit/rest-api/ test/e2e/automated/",
     "prep-test": "node util/users/delete-all-test-users.js"
   },
   "keywords": [
