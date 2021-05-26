@@ -1,19 +1,23 @@
 # Developer Documentation
 
-This is living documentation that will be updated, edited, and changed over time, using the same version control as the rest of the code. The purpose of this documentation is to capture and explain the inner workings of the permissionless, censorship-resistant database driving tor-list.
+This is living documentation that will be updated, edited, and changed over time, using the same version control as the rest of the code. The purpose of this documentation is to capture and explain the inner workings of the permissionless, censorship-resistant database driving [TorList.cash](https://torlist.cash).
 
 # Overview
 
-There are three major pieces of software behind the tor-list concept:
+There are three major pieces of software behind the tor-list concept. The work together to form a censorship-resistant application for curating information about websites.
 
 ![tor-list major subcomponents](./diagrams/software-interaction.png)
 
-- [tor-list-frontend](https://github.com/Permissionless-Software-Foundation/tor-list-frontend) is the web based user interface (UI) which can seen at [TorList.cash](https://torlist.cash/).
+- [tor-list-frontend](https://github.com/Permissionless-Software-Foundation/tor-list-frontend) is the web based user interface (UI) which can be seen at [TorList.cash](https://torlist.cash/).
 - [tor-list-api](https://github.com/Permissionless-Software-Foundation/tor-list-api) is the back end REST API that maintains a local database of information that tor-list-frontend reads from.
-- [P2WDB] is the [pay-to-write-orbitdb](https://github.com/Permissionless-Software-Foundation/pay-to-write-orbitdb) REST API that infaces to the global peer-to-peer (p2p) database.
+- P2WDB is the [pay-to-write-orbitdb](https://github.com/Permissionless-Software-Foundation/pay-to-write-orbitdb) REST API that infaces to the global peer-to-peer (p2p) database.
 
 The arrows in the image represent the information flow between the three pieces of software:
 
 - tor-list-frontend displays information about websites. It _reads_ this information from tor-list-api.
 - tor-list-frontend is also a web wallet. It can generate the needed transactions to _write_ information to the P2WDB.
 - tor-list-api imports data from the global database into its local database using [OrbitDB replication events](https://github.com/orbitdb/orbit-db/blob/main/GUIDE.md#replicating-a-database).
+
+This architecture keeps the global database highly censorship resistant, while allowing local installations to have a tight control over their user experience. The goal is to have many curation sites similar to [TorList.cash](https://torlist.cash). Each site would cater to their niche by customizing the display of the data, but they would all tap into the same global database of information.
+
+**Example:** [TorList.cash](https://torlist.cash) will prevent the display of sites that are associated with drugs, guns, pornography, or gambling. That data can still exist in the global database, it just won't be displayed on Torlist.cash. Other websites, using a fork of the same software, can display those categories. They could also impose stricter rules to filter the data even more aggressively. Each site competes with the others, but work together to maintain the global database.
