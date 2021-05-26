@@ -34,7 +34,7 @@ This section provides additional information on the tor-list-api and P2WDB back 
 
 ## P2WDB
 
-The heart of censorship resistance is the pay-to-write database (P2WDB). This is an [OrbitDB](https://orbitdb.org/) peer-to-peer (p2p) database. The write-access rules have been customized to allow anyone to write to the database, so long they prove that a sufficient quantity [PSF tokens](https://psfoundation.cash) have been burned, to pay for the write.
+The heart of the censorship resistance is the pay-to-write database (P2WDB). This is an [OrbitDB](https://orbitdb.org/) peer-to-peer (p2p) database. The write-access rules have been customized to allow anyone to write to the database, so long they prove that a sufficient quantity [PSF tokens](https://psfoundation.cash) have been burned, to pay for the write.
 
 Because OrbitDB is a p2p database, no one party holds the 'official' copy of the database. Instead, like a blockchain, the database is replicated among several peers, and they coordinate updates to the database using consensus rules. Peers are free to leave or enter the network. Each peer independently verifies the database entries have sufficient proof-of-burn.
 
@@ -50,11 +50,13 @@ tor-list-api is based on this [koa-api-boilerplate](https://github.com/christrou
 
 This section describes the protocols for the database interactions between the three main software components.
 
+Right now, these descriptions are just rough outlines. More specification information will be added as the code is further developed.
+
 ## Writing to the Global Database
 
-Adding data to the global P2WDB is a result of the interaction between tor-list-frontend and pay-to-write-orbitdb. tor-list-api is not involved.
+Adding data to the global P2WDB is a result of the interaction between tor-list-frontend and the pay-to-write-orbitdb. tor-list-api is not involved.
 
-Writing data follows these sets of steps:
+Writing data follows these steps:
 
 - To add an entry to the global database, tor-list-frontend collects the data the user wants to add to the database, but it also collects several pieces of required information 'behind the scenes':
   - The users BCH address.
@@ -62,7 +64,7 @@ Writing data follows these sets of steps:
   - A signature generated from the cleartext message and the BCH address.
   - It burns the required amount of PSF tokens, and generates a transaction ID (TXID) as proof of this burn.
 - tor-list-frontend then communicates with P2WDB via its REST API to submit all the data.
-- The P2WDB REST API will then evaluate the data and attempt to update the p2p database using the TXID as the proof to the other piers that the write is valid.
+- The P2WDB REST API will then evaluate the data and attempt to update the p2p database using the TXID.
 - Each peer on the network will independently validate the new database entry.
 - The copy of OrbitDB in tor-list-api will receive a replication event. This event will trigger the import of the new data into the apps local Mongo database.
 
