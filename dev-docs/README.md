@@ -4,4 +4,4 @@ This is living documentation that will be updated, edited, and change over time,
 
 There are three major pieces of software behind the tor-list concept:
 
-![tor-list major subcomponents](./diagrams/rest-api-subcomponents.png)
+![tor-list major subcomponents](./diagrams/software-interaction.png)
