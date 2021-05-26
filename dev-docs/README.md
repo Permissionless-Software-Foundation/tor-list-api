@@ -24,7 +24,13 @@ This architecture keeps the global database highly censorship resistant, while a
 
 # Back End
 
-This section provides additional information on the tor-list-api and P2WDB back end software.
+This section provides additional information on the tor-list-api and P2WDB back end software. Each of the back end components are composed of three internal software components:
+
+![back end subcomponents](./diagrams/rest-api-subcomponents.png)
+
+- [Koa](https://koajs.com/) framework for building REST APIs.
+- Mongo Database for a local database.
+- Oribit Database for a global peer-to-peer database.
 
 ## P2WDB
 
