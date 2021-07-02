@@ -50,23 +50,23 @@ Right now, these descriptions are just rough outlines. More specification inform
 
 ## Writing to the Global Database
 
-Adding data to the global P2WDB is a result of the interaction between tor-list-frontend and the pay-to-write-orbitdb. tor-list-api is not involved.
+Adding data to the global P2WDB is a result of the interaction between tor-list-frontend and the P2WDB. tor-list-api is not involved.
 
 Writing data follows these steps:
 
-- To add an entry to the global database, tor-list-frontend collects the data the user wants to add to the database, but it also collects several pieces of required information 'behind the scenes':
+- To add an entry to the P2WDB, tor-list-frontend collects the data the user wants to add to the database, but it also collects several pieces of required information 'behind the scenes':
   - The users BCH address.
-  - A cleartext message
+  - A cleartext message (The website URL)
   - A signature generated from the cleartext message and the BCH address.
   - It burns the required amount of PSF tokens, and generates a transaction ID (TXID) as proof of this burn.
 - tor-list-frontend then communicates with P2WDB via its REST API to submit all the data.
 - The P2WDB REST API will then evaluate the data and attempt to update the p2p database using the TXID.
 - Each peer on the network will independently validate the new database entry.
-- The copy of OrbitDB in tor-list-api will receive a replication event. This event will trigger the import of the new data into the apps local Mongo database.
+- tor-list-api will receive a webhook call to its POST endpoint. This event will trigger the import of the new data into the apps local Mongo database.
 
 ## Reading from the Local Database
 
-tor-list-frontend reads data from the local database stored by tor-list-api, and does not read the global database directly. This gives tor-list-api the opportunity to filter and modify the data locally for a better user experience.
+tor-list-frontend reads data from the local database stored by tor-list-api, and does not read the global database directly. This gives tor-list-api the opportunity to filter and modify the data locally for a more controlled user experience.
 
 The most important filter that tor-list-api runs against the data is the blacklist filter. Entries in the OrbitDB are identified by a [CID](https://docs.ipfs.io/concepts/content-addressing/) or 'hash'. The blacklist filter is a collection of CIDs that have been 'blacklisted' for removal before being displayed on the front end. This allows the administrators of the website to prevent spam and abuse.
 
