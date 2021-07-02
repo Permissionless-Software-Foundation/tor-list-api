@@ -2,6 +2,8 @@
 
 This is living documentation that will be updated, edited, and changed over time, using the same version control as the rest of the code. The purpose of this documentation is to capture and explain how this tor-list-api and [tor-list-frontend](https://github.com/Permissionless-Software-Foundation/tor-list-frontend) [SPA](https://en.wikipedia.org/wiki/Single-page_application) interact with the [P2WDB](https://github.com/Permissionless-Software-Foundation/ipfs-p2wdb-service) to create a permissionless, censorship-resistant database for storing and sharing deep-web websites at [TorList.cash](https://torlist.cash).
 
+- [Specification](./specification.md)
+
 # Overview
 
 There are three major pieces of software behind the tor-list concept. They work together to form a censorship-resistant application for curating information about websites.
@@ -24,27 +26,21 @@ This architecture keeps the global database highly censorship resistant, while a
 
 # Back End
 
-This section provides additional information on the tor-list-api and P2WDB back end software. Each of the back end components are composed of three internal software components:
-
-![back end subcomponents](./diagrams/rest-api-subcomponents.png)
-
-- [Koa](https://koajs.com/) framework for building REST APIs.
-- Mongo Database for a local database.
-- Oribit Database for a global peer-to-peer database.
+This section provides additional information on the tor-list-api and P2WDB back end software.
 
 ## P2WDB
 
-The heart of the censorship resistance is the pay-to-write database (P2WDB). This is an [OrbitDB](https://orbitdb.org/) peer-to-peer (p2p) database. The write-access rules have been customized to allow anyone to write to the database, so long they prove that a sufficient quantity [PSF tokens](https://psfoundation.cash) have been burned, to pay for the write.
+The heart of the censorship resistance is the pay-to-write database ([P2WDB](https://github.com/Permissionless-Software-Foundation/ipfs-p2wdb-service)). This is an [OrbitDB](https://orbitdb.org/) peer-to-peer (p2p) database. The write-access rules have been customized to allow anyone to write to the database, so long they prove that a sufficient quantity [PSF tokens](https://psfoundation.cash) have been burned, to pay for the write.
 
 Because OrbitDB is a p2p database, no one party holds the 'official' copy of the database. Instead, like a blockchain, the database is replicated among several peers, and they coordinate updates to the database using consensus rules. Peers are free to leave or enter the network. Each peer independently verifies the database entries have sufficient proof-of-burn.
-
-For more information, the code and documentation can be found in the [pay-to-write-orbitdb](https://github.com/Permissionless-Software-Foundation/pay-to-write-orbitdb) repository.
 
 ## tor-list-api
 
 The [tor-list-api](https://github.com/Permissionless-Software-Foundation/tor-list-api) replicates a copy of the global P2WDB, but has the ability to apply localized filters to the data before passing it on to tor-list-frontend to be displayed. The most important filter is the `blacklist` model, which allows administrators of the site to mark database entries as 'blacklisted', to prevent them from being displayed.
 
 tor-list-api is based on this [koa-api-boilerplate](https://github.com/christroutner/koa-api-boilerplate), which is a production ready REST API that includes many features for building a web app. This includes user management and authentication, REST API scaffolding, API documentation, Docker container generation, and extensive test coverage. It's intended to be customized for the needs of the website administrator.
+
+- [Specification](./specification.md)
 
 # Workflows
 
