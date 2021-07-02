@@ -46,7 +46,7 @@ tor-list-api is based on this [koa-api-boilerplate](https://github.com/christrou
 
 This section describes the protocols for the database interactions between the three main software components.
 
-Right now, these descriptions are just rough outlines. More specification information will be added as the code is further developed.
+These are just a brief, high-level overview. Review the [Specifications](./specification.md) for more details.
 
 ## Writing to the Global Database
 
