@@ -7,6 +7,8 @@ This document contains a high-level, human-readable specification for the four m
 - Controllers (inputs)
 - Adapters (outputs)
 
+This reflects the [Clean Architecture](https://github.com/Permissionless-Software-Foundation/ipfs-p2wdb-service/blob/master/dev-docs/clean-architecture.md) design pattern.
+
 ## Entities
 
 Entities make up the core business concepts. If these entities change, they fundamentally change the entire app.
