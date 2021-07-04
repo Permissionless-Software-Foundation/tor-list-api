@@ -61,6 +61,7 @@ Controllers are inputs to the system. When a controller is activated, it causes 
 - **24 hour Timer** - A timer which triggers every 24 hours, sets off an update of the database. When it triggers, the following actions should take place:
   - All the website entities should be added to a retry-queue. Highest-merit websites are processed first, lowest merit last.
   - The server will recalculate the merit for each Website Entity in the queue.
+    - TODO: Figure out a good garbage collection scheme to remove websites that consistently have no merit.
   - The server will update the 'top 100' in each Category Entity.
 
 ## Adapters
